@@ -1,0 +1,43 @@
+#######################################
+# Syntax Coloring Map MCP23x18
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+MCP23x18	KEYWORD1
+MCPreg	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+write	KEYWORD2
+read	KEYWORD2
+IODIR	KEYWORD2
+IPOL	KEYWORD2
+GPINTEN	KEYWORD2
+DEFVAL	KEYWORD2
+INTCON	KEYWORD2
+IOCON	KEYWORD2
+GPPU	KEYWORD2
+INTF	KEYWORD2
+INTCAP	KEYWORD2
+GPIO	KEYWORD2
+OLAT	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+IODIR_ADDR	LITERAL1
+IPOL_ADDR	LITERAL1
+GPINTEN_ADDR	LITERAL1
+DEFVAL_ADDR	LITERAL1
+INTCON_ADDR	LITERAL1
+IOCON_ADDR	LITERAL1
+GPPU_ADDR	LITERAL1
+INTF_ADDR	LITERAL1
+INTCAP_ADDR	LITERAL1
+GPIO_ADDR	LITERAL1
+OLAT_ADDR	LITERAL1
+
