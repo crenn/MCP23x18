@@ -10,7 +10,7 @@ CFLAGS_$(d) := $(WIRISH_INCLUDES) $(LIBMAPLE_INCLUDES)
 # Local rules and targets
 cSRCS_$(d) :=
 
-cppSRCS_$(d) := MCP23x18.cpp MCPreg.cpp
+cppSRCS_$(d) := MCP23x18.cpp MCP23S18.cpp MCP23018.cpp
 
 cFILES_$(d) := $(cSRCS_$(d):%=$(d)/%)
 cppFILES_$(d) := $(cppSRCS_$(d):%=$(d)/%)

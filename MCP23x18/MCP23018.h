@@ -25,65 +25,40 @@
  *****************************************************************************/
 
 /**
- * @file MCP23x18.cpp
+ * @file MCP23018.h
  * @author Trystan Jones <crenn6977@gmail.com>
- * @brief The library allows easier interacting with the MCP23x18 devices and
+ * @brief The library allows easier interacting with the MCP23018 devices and
  *        offers the ability to use it similar to an internal microcontroller
  *        register
  */
- 
+
+#ifndef _MCP23018_H_
+#define _MCP23018_H_
+
 #include "MCP23x18.h"
+#include "WProgram.h"
+#include "WireBase.h"
 
-MCP23x18::MCP23x18(void) {
-#if defined(useregs)
-  initReg();
-#endif
-}
+class MCP23018 : public MCP23x18 {
+  public:
+    /*
+     * Sets the MCP23x18 class to use a I2C interface and sets the expected
+     * address selected by the user
+     */
+    MCP23018(WireBase& dev, unsigned char address);
+    /*
+     * Writes the value to the selected register, ensuring if IOCON is written
+     * to, that BANK cannot be selected.
+     */
+    void write(unsigned char reg, unsigned short data);
 
-#if defined(useregs)
-void MCP23x18::initReg(void) {
-  IODIR.setAddr(IODIR_ADDR);
-  IODIR.setMCP(*this);
-  IPOL.setAddr(IPOL_ADDR);
-  IPOL.setMCP(*this);
-  GPINTEN.setAddr(GPINTEN_ADDR);
-  GPINTEN.setMCP(*this);
-  DEFVAL.setAddr(DEFVAL_ADDR);
-  DEFVAL.setMCP(*this);
-  INTCON.setAddr(INTCON_ADDR);
-  INTCON.setMCP(*this);
-  IOCON.setAddr(IOCON_ADDR);
-  IOCON.setMCP(*this);
-  GPPU.setAddr(GPPU_ADDR);
-  GPPU.setMCP(*this);
-  INTF.setAddr(INTF_ADDR);
-  INTF.setMCP(*this);
-  INTCAP.setAddr(INTCAP_ADDR);
-  INTCAP.setMCP(*this);
-  GPIO.setAddr(GPIO_ADDR);
-  GPIO.setMCP(*this);
-  OLAT.setAddr(OLAT_ADDR);
-  OLAT.setMCP(*this);
-}
+    /*
+     * Reads and returns the value from the selected register
+     */
+    unsigned short read(unsigned char reg);
+  private:
+    WireBase* mcptw;
+};
+
 #endif
 
-MCP23x18::MCPreg::MCPreg(unsigned char add) {
-  setAddr(add);
-}
-
-void MCP23x18::MCPreg::setAddr(unsigned char add) {
-  regAddr = add;
-}
-
-void MCP23x18::MCPreg::setMCP(MCP23x18& device) {
-  dev = &device;
-}
-
-MCP23x18::MCPreg::operator short() {
-  return dev->read(regAddr);
-}
-
-unsigned short MCP23x18::MCPreg::operator= (unsigned short value) {
-  dev->write(regAddr, value);
-  return value;
-}

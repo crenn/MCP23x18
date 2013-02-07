@@ -2,7 +2,7 @@
 #include <MCP23x18.h>
 
 HardWire port(1);
-MCP23x18 mcp(port, 0);
+MCP23018 mcp(port, 0);
 
 
 void setup(void) {

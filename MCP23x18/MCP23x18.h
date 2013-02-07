@@ -27,16 +27,15 @@
 /**
  * @file MCP23x18.h
  * @author Trystan Jones <crenn6977@gmail.com>
- * @brief The library allows easier interactig with the MCP23x18 devices and
- * offers the ability to use it similar to an internal microcontroller register
+ * @brief The library allows easier interacting with the MCP23x18 devices and
+ *        offers the ability to use it similar to an internal microcontroller
+ *        register
  */
 
 #ifndef _MCP23x18_H_
 #define _MCP23x18_H_
 
 #include "WProgram.h"
-#include "HardwareSPI.h"
-#include "WireBase.h"
 
 // Default opcode address of the MCP23x18
 #define MCP23x18_DEF_ADDR   0x40
@@ -63,17 +62,11 @@
 
 class MCP23x18 {
   public:
-    /*
-     * Sets the MCP23x18 class to use a SPI interface and sets the chip select
-     * pin to engauge the MCP23S18.
-     */
-    MCP23x18(HardwareSPI& dev, unsigned char cspin);
     
     /*
-     * Sets the MCP23x18 class to use a I2C interface and sets the expected
-     * address selected by the user
+     * Default constructor
      */
-    MCP23x18(WireBase& dev, unsigned char address);
+    MCP23x18(void);
 
 #if defined(useregs)
     /*
@@ -126,26 +119,25 @@ class MCP23x18 {
 
     /*
      * Writes the value to the selected register, ensuring if IOCON is written
-     * to, that BANK cannot be selected.
+     * to, that BANK cannot be selected. Abstract to ensure must be defined by
+     * sub class.
      */
-    void write(unsigned char reg, unsigned short data);
+    virtual void write(unsigned char reg, unsigned short data) = 0;
     
     /*
-     * Reads and returns the value from the selected register
+     * Reads and returns the value from the selected register. Abstract to
+     * ensure must be defined by sub class.
      */
-    unsigned short read(unsigned char reg);
+    virtual unsigned short read(unsigned char reg) = 0;
   private:
-    HardwareSPI* mcpspi;
-    WireBase* mcptw;
 #if defined(useregs)
     /*
      * Initialises the register classes to allow access
      */
     void initReg(void);
 #endif
-    bool porttype;
+  protected:
     unsigned char addr;
-    unsigned char cs;
 };
 
 #endif

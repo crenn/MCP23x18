@@ -25,65 +25,41 @@
  *****************************************************************************/
 
 /**
- * @file MCP23x18.cpp
+ * @file MCP23S18.cpp
  * @author Trystan Jones <crenn6977@gmail.com>
- * @brief The library allows easier interacting with the MCP23x18 devices and
+ * @brief The library allows easier interacting with the MCP23S18 devices and
  *        offers the ability to use it similar to an internal microcontroller
  *        register
  */
- 
-#include "MCP23x18.h"
 
-MCP23x18::MCP23x18(void) {
-#if defined(useregs)
-  initReg();
-#endif
+#include "MCP23S18.h"
+
+MCP23S18::MCP23S18(HardwareSPI& dev, unsigned char cspin) {
+  mcpspi = &dev;
+  cs = cspin;
+  addr = MCP23x18_DEF_ADDR;
 }
 
-#if defined(useregs)
-void MCP23x18::initReg(void) {
-  IODIR.setAddr(IODIR_ADDR);
-  IODIR.setMCP(*this);
-  IPOL.setAddr(IPOL_ADDR);
-  IPOL.setMCP(*this);
-  GPINTEN.setAddr(GPINTEN_ADDR);
-  GPINTEN.setMCP(*this);
-  DEFVAL.setAddr(DEFVAL_ADDR);
-  DEFVAL.setMCP(*this);
-  INTCON.setAddr(INTCON_ADDR);
-  INTCON.setMCP(*this);
-  IOCON.setAddr(IOCON_ADDR);
-  IOCON.setMCP(*this);
-  GPPU.setAddr(GPPU_ADDR);
-  GPPU.setMCP(*this);
-  INTF.setAddr(INTF_ADDR);
-  INTF.setMCP(*this);
-  INTCAP.setAddr(INTCAP_ADDR);
-  INTCAP.setMCP(*this);
-  GPIO.setAddr(GPIO_ADDR);
-  GPIO.setMCP(*this);
-  OLAT.setAddr(OLAT_ADDR);
-  OLAT.setMCP(*this);
-}
-#endif
-
-MCP23x18::MCPreg::MCPreg(unsigned char add) {
-  setAddr(add);
+void MCP23S18::write(unsigned char reg, unsigned short data) {
+  if((reg == IOCON_ADDR) && (data&0x80)) {
+    data &= ~0x80;
+  }
+  digitalWrite(cs, LOW);
+  mcpspi->transfer(addr);
+  mcpspi->transfer(reg);
+  mcpspi->transfer(data&0xFF);
+  if((reg != IOCON_ADDR))
+    mcpspi->transfer((data>>8)&0xFF);
+  digitalWrite(cs, HIGH);
 }
 
-void MCP23x18::MCPreg::setAddr(unsigned char add) {
-  regAddr = add;
-}
-
-void MCP23x18::MCPreg::setMCP(MCP23x18& device) {
-  dev = &device;
-}
-
-MCP23x18::MCPreg::operator short() {
-  return dev->read(regAddr);
-}
-
-unsigned short MCP23x18::MCPreg::operator= (unsigned short value) {
-  dev->write(regAddr, value);
-  return value;
+unsigned short MCP23S18::read(unsigned char reg) {
+  unsigned char temp[2] ={0x00};
+  digitalWrite(cs, LOW);
+  mcpspi->transfer(addr|0x01);
+  mcpspi->transfer(reg);
+  temp[0] = mcpspi->transfer(0x00);
+  temp[1] = mcpspi->transfer(0x00);
+  digitalWrite(cs, HIGH);
+  return ((temp[1]<<8)|temp[0]);
 }
